@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sub2Visit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      background-color: #f0f0f0;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .card-panel {
+      padding: 20px;
+    }
+    .btn-locked {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    #create-key-tab {
+      background-color: #fff; 
+    }
+    .tabs .tab a {
+      color: #000;
+    }
+    .check-animation {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 2px solid #333;
+      border-top-color: transparent;
+      border-right-color: transparent;
+      animation: spin 0.5s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .redirect-info {
+      margin-top: 10px;
+    }
+    .success-message {
+      color: green;
+      font-weight: bold;
+    }
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+    #copy-key-btn {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <ul class="tabs">
+      <li class="tab col s6"><a href="#decrypt-tab"><i class="fas fa-unlock"></i> Redirect</a></li>
+      <li class="tab col s6"><a href="#create-key-tab"><i class="fas fa-key"></i> Create Key</a></li>
+    </ul>
+    <div id="decrypt-tab" class="col s12">
+      <div class="card-panel">
+        <form id="decrypt-form">
+          <div id="redirect-name-info" style="display: none;"></div>
+          <div class="input-field" id="redirect-key-input">
+            <input id="decrypt-key" type="text" class="validate" placeholder="Enter redirect key">
+            <label for="decrypt-key">Enter redirect key</label>
+          </div>
+          <button type="submit" class="btn waves-effect waves-light" id="decrypt-btn"><i class="fas fa-lock-open"></i> Decrypt Key</button>
+        </form>
+        <div style="position: fixed; bottom: 10px; right: 10px; color: rgba(0, 0, 0, 0.3); font-size: 12px;">Made by @pyroalw</div>
+        <div id="redirect-info" class="redirect-info" style="display: none;"></div>
+        <button id="follow-btn" class="btn waves-effect waves-light" style="display: none;"><i class="fas fa-user-plus"></i> Follow</button>
+        <span id="check-animation" class="check-animation" style="display: none;"></span>
+        <a id="go-to-website-btn" class="btn waves-effect waves-light btn-locked" style="display: none;"><i id="lock-icon" class="fas fa-lock"></i> Go to website</a>
+      </div>
+    </div>
+    <div id="create-key-tab" class="col s12">
+      <div class="card-panel">
+        <form id="create-key-form">
+          <div class="input-field">
+            <input id="website-url" type="url" class="validate" placeholder="Website URL">
+            <label for="website-url">Redirect URL</label>
+          </div>
+          <div class="input-field">
+            <input id="instagram-nick" type="text" class="validate" placeholder="Instagram Nick">
+            <label for="instagram-nick">Instagram Nickname (ex. c4gwn)</label>
+          </div>
+          <div class="input-field">
+            <input id="redirect-name" type="text" class="validate" placeholder="Redirect Name">
+            <label for="redirect-name">Redirect Title</label>
+          </div>
+
+          <button type="submit" class="btn waves-effect waves-light"><i class="fas fa-key"></i> Generate Redirect Key</button>
+          <div id="success-message" class="success-message" style="display: none;"></div>
+          <div id="error-message" class="error-message" style="display: none;"></div>
+        </form>
+        
+        <button id="copy-key-btn" class="btn waves-effect waves-light" style="display: none;"><i class="far fa-copy"></i> Copy Key</button>
+        <div style="position: fixed; bottom: 10px; right: 10px; color: rgba(0, 0, 0, 0.3); font-size: 12px;">made by @pyroalw | © 2023</div>
+    </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.tabs');
+      M.Tabs.init(tabs);
+
+      let key;
+
+      function redirectToWebsite() {
+        const goToWebsiteBtn = document.getElementById('go-to-website-btn');
+        goToWebsiteBtn.classList.remove('btn-locked');
+        goToWebsiteBtn.removeAttribute('disabled');
+        goToWebsiteBtn.addEventListener('click', function() {
+          window.location.href = key.websiteURL;
+        });
+        document.getElementById('lock-icon').classList.remove('fa-lock');
+        document.getElementById('lock-icon').classList.add('fa-unlock');
+      }
+
+      function checkFollowStatus() {
+        // Simulate checking follow status
+        setTimeout(function() {
+          document.getElementById('check-animation').style.display = 'none';
+          document.getElementById('follow-btn').innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+          document.getElementById('follow-btn').disabled = false;
+          document.getElementById('follow-btn').addEventListener('click', function() {
+            window.open(key.instagramURL, '_blank');
+            document.getElementById('check-animation').style.display = 'inline-block';
+            document.getElementById('follow-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Following...';
+            document.getElementById('follow-btn').disabled = true;
+            redirectToWebsite();
+            setTimeout(function() {
+              redirectToWebsite();
+              document.getElementById('follow-btn').innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+              document.getElementById('follow-btn').disabled = false;
+              document.getElementById('check-animation').style.display = 'none';
+              document.getElementById('go-to-website-btn').style.display = 'block';
+            }, 5000); 
+          });
+        }, 2000);
+      }
+
+      document.getElementById('create-key-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const websiteURL = document.getElementById('website-url').value.trim();
+        const instagramNick = document.getElementById('instagram-nick').value.trim();
+        const redirectName = document.getElementById('redirect-name').value.trim();
+        const backgroundColor = document.getElementById('background-color').value;
+
+        if (!websiteURL || !instagramNick || !redirectName) {
+          document.getElementById('error-message').innerText = 'Please fill in all fields.';
+          document.getElementById('error-message').style.display = 'block';
+          return;
+        }
+
+        const instagramURL = `https://instagram.com/${instagramNick}`;
+        key = {
+          websiteURL,
+          instagramURL,
+          redirectName
+        };
+        document.getElementById('create-key-tab').style.backgroundColor = backgroundColor;
+        const encodedKey = btoa(JSON.stringify(key));
+        document.getElementById('success-message').innerText = 'Key generated successfully! Share this key with the user: ' + encodedKey;
+        document.getElementById('success-message').style.display = 'block';
+        document.getElementById('error-message').style.display = 'none';
+
+        // Copy key to clipboard
+        const copyText = document.createElement('textarea');
+        copyText.value = encodedKey;
+        document.body.appendChild(copyText);
+        copyText.select();
+        document.execCommand('copy');
+        document.body.removeChild(copyText);
+
+        // Show copy key button
+        document.getElementById('copy-key-btn').style.display = 'block';
+      });
+
+      document.getElementById('decrypt-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const decryptKey = document.getElementById('decrypt-key').value.trim();
+        try {
+          key = JSON.parse(atob(decryptKey));
+          document.getElementById('redirect-key-input').style.display = 'none';
+          document.getElementById('redirect-name-info').innerHTML = `
+            <span><strong>Redirect Name:</strong> ${key.redirectName}</span>
+          `;
+          document.getElementById('redirect-name-info').style.display = 'block';
+          document.getElementById('follow-btn').style.display = 'block';
+          document.getElementById('follow-btn').innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+          document.getElementById('follow-btn').disabled = false;
+          document.getElementById('check-animation').style.display = 'inline-block';
+          document.getElementById('follow-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+          document.getElementById('follow-btn').disabled = true;
+          checkFollowStatus();
+          document.getElementById('decrypt-btn').style.display = 'none';
+        } catch (error) {
+          document.getElementById('error-message').innerText = 'Invalid key';
+          document.getElementById('error-message').style.display = 'block';
+        }
+      });
+
+      // Copy key button functionality
+      document.getElementById('copy-key-btn').addEventListener('click', function() {
+        const copyText = document.createElement('textarea');
+        copyText.value = document.getElementById('success-message').innerText.split(':')[1].trim();
+        document.body.appendChild(copyText);
+        copyText.select();
+        document.execCommand('copy');
+        document.body.removeChild(copyText);
+        alert('Key copied to clipboard!');
+      });
+    });
+  </script>
+</body>
+</html>
